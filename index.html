@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RapidAid – Accident Emergency Response</title>
+<title>Viva · A Ray of Hope in the Darkest Hours</title>
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -39,7 +40,7 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
 <div class="wrap min-h-screen">
 <header class="sticky top-0 z-30 glass !rounded-none">
   <div class="max-w-5xl mx-auto flex items-center justify-between px-4 py-3 gap-3">
-    <button onclick="go(1)" class="flex items-center gap-2 font-black text-xl" aria-label="RapidAid home"><span class="text-yellow-400 text-2xl">✚</span> RapidAid</button>
+    <button onclick="go(1)" class="flex items-center gap-2 font-black text-xl text-left" aria-label="Viva home"><span class="text-yellow-400 text-3xl">✚</span><span class="leading-tight">Viva<span class="block text-[10px] sm:text-xs font-medium italic text-yellow-200 tracking-wide">A Ray of Hope in the Darkest Hours</span></span></button>
     <nav class="hidden sm:flex gap-5 text-sm font-semibold" aria-label="Main">
       <button onclick="go(1)">About</button><button onclick="go(2)">Mission</button><button onclick="go(3)">Contact</button><button onclick="go(4)">Report</button><button onclick="go(8)">Dashboard</button>
     </nav>
@@ -53,12 +54,13 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
 <!-- 1 About -->
 <section class="step" data-s="1">
   <div class="py-8 text-center">
+    <h2 class="text-6xl sm:text-8xl font-black tracking-tight text-yellow-400" style="text-shadow:0 0 30px rgba(245,184,46,.45)">Viva</h2><p class="text-lg sm:text-2xl italic text-sky-200 mb-5">A Ray of Hope in the Darkest Hours</p>
     <p class="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-sky-300 text-sm font-semibold mb-4">Accident emergency response · Every second counts</p>
     <h1 class="text-4xl sm:text-6xl font-black leading-tight text-sky-300" style="text-shadow:0 2px 14px rgba(0,0,0,.75)">See an accident?<br><span class="text-blue-500">Snap. Send. Saved.</span></h1>
     <p class="mt-4 text-lg text-zinc-300 max-w-2xl mx-auto">One photo alerts the police, dispatches an ambulance and notifies every nearby hospital at the same time.</p>
     <div class="mt-7 flex flex-wrap gap-3 justify-center"><button onclick="startSOS('hero button')" class="btn text-xl !px-8 !py-4">⚡ Instant SOS · 1 tap</button><button onclick="go(4)" class="btn alt text-xl !px-8 !py-4">📷 Report with photo</button></div><p class="text-sm text-sky-200 mt-3">No login · No sign-up · Works the moment you open it</p>
   </div>
-  <div class="glass p-6 text-center max-w-3xl mx-auto"><h2 class="text-2xl font-bold mb-2">About RapidAid</h2><p class="text-zinc-300">RapidAid is a connected emergency response platform. It links bystanders, police, ambulance crews and hospitals in one fast flow, so that help is on its way before anyone has to search for a phone number.</p><button onclick="go(2)" class="btn alt mt-4">Read our mission &amp; vision →</button></div>
+  <div class="glass p-6 text-center max-w-3xl mx-auto"><h2 class="text-2xl font-bold mb-2">About Viva</h2><p class="text-zinc-300">Viva is a connected emergency response platform. It links bystanders, police, ambulance crews and hospitals in one fast flow, so that help is on its way before anyone has to search for a phone number.</p><button onclick="go(2)" class="btn alt mt-4">Read our mission &amp; vision →</button></div>
   <div class="grid sm:grid-cols-3 gap-4 mt-4 text-center">
     <div class="glass p-5"><div class="text-3xl">📍</div><b>GPS first</b><p class="text-sm text-zinc-400">Nearest hospitals chosen automatically</p></div>
     <div class="glass p-5"><div class="text-3xl">👮</div><b>Police verified</b><p class="text-sm text-zinc-400">Incident forwarded to control room</p></div>
@@ -133,14 +135,16 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
         <button id="camBtn" class="btn">📷 Open camera</button>
         <button id="snapBtn" class="btn alt" disabled>⚪ Capture</button>
       </div>
+      <div id="imgCheck" class="mt-3 text-sm" aria-live="polite"></div>
       <label class="btn alt block text-center mt-2 cursor-pointer">⬆ Upload photo
-        <input id="file" type="file" accept="image/*" capture="environment" class="hidden"></label>
+        <input id="file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" class="hidden"></label>
     </div>
     <div class="glass p-5">
       <label for="type" class="font-semibold">Type of emergency</label>
       <select id="type" class="mt-1 mb-3"><option>Road accident</option><option>Fire</option><option>Medical collapse</option><option>Other</option></select>
       <label for="vict" class="font-semibold">People injured (approx.)</label>
       <input id="vict" type="number" min="1" value="1" class="mt-1 mb-3">
+      <label class="flex items-start gap-2 text-sm mb-3"><input id="decl" type="checkbox" class="!w-5 !h-5 !p-0 mt-0.5"><span>I confirm this photo shows a real accident happening now. False reports are punishable by law.</span></label>
       <button id="verifyBtn" class="btn w-full" disabled>👮 Verify &amp; alert police</button>
       <ul id="vlog" class="mt-4 space-y-2 text-sm" aria-live="polite"></ul>
       <div class="bar mt-3"><i id="vbar"></i></div>
@@ -183,23 +187,23 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
 <section class="step" data-s="7">
   <h2 class="text-3xl font-black mb-4">Service payment</h2>
   <div class="grid md:grid-cols-2 gap-4">
-    <div class="glass p-5">
-      <label for="fee" class="font-semibold">Dispatch service fee (INR ₹)</label>
-      <input id="fee" type="number" min="1" step="10" value="500" class="mt-1 mb-3 text-xl font-bold">
-      <div class="flex justify-between text-zinc-300"><span>Dispatch &amp; coordination</span><span id="f1">₹500.00</span></div>
-      <div class="flex justify-between text-zinc-300"><span>Platform tax (5%)</span><span id="f2">₹25.00</span></div>
-      <hr class="border-blue-800 my-2"><div class="flex justify-between text-xl font-black"><span>Total</span><span id="f3">₹525.00</span></div>
-    </div>
+    <div class="glass p-5"><h3 class="font-bold mb-1">🚑 Ambulance fare estimate</h3><p class="text-xs text-zinc-400 mb-3">Worked out from live distance, number of patients, emergency type and time of day.</p>
+      <div id="fareRows" class="space-y-1 text-sm"></div>
+      <div class="flex justify-between text-zinc-300 mt-1"><span>Platform tax (5%)</span><span id="f2"></span></div>
+      <hr class="border-blue-800 my-2"><div class="flex justify-between text-xl font-black"><span>Total</span><span id="f3"></span></div>
+      <p class="text-xs text-zinc-500 mt-2">Estimate only. The crew confirms the final fare, and nothing is charged before help is dispatched.</p></div>
     <div class="glass p-5" id="payBox"><div id="payForm">
-      <p class="text-xs text-amber-300 mb-2">Demo checkout: no real charge is made and card data never leaves your browser.</p>
-      <label for="cn" class="font-semibold">Card number</label>
-      <input id="cn" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="19" class="mt-1 mb-2">
-      <div class="grid grid-cols-2 gap-2 mb-2">
-        <div><label for="ce" class="font-semibold">Expiry</label><input id="ce" placeholder="MM/YY" maxlength="5" class="mt-1"></div>
-        <div><label for="cc" class="font-semibold">CVV</label><input id="cc" type="password" inputmode="numeric" maxlength="4" placeholder="•••" class="mt-1"></div>
-      </div>
-      <input id="cname" placeholder="Name on card" class="mb-3" aria-label="Name on card">
-      <button id="payBtn" class="btn w-full text-lg">🔒 Pay <span id="payAmt">₹525.00</span></button>
+      <p class="text-sm text-green-300 mb-2">🔒 You pay inside your own UPI app. No card or bank details are typed or stored here, and your UPI PIN never reaches this site.</p>
+      <p class="text-lg font-bold mb-2">Amount to pay: <span id="payAmt">₹525.00</span></p>
+      <div class="grid grid-cols-2 gap-2">
+        <a id="upGpay" href="#" class="btn block text-center !py-3">GPay</a><a id="upPhonepe" href="#" class="btn block text-center !py-3">PhonePe</a>
+        <a id="upPaytm" href="#" class="btn block text-center !py-3">Paytm</a><a id="upAny" href="#" class="btn alt block text-center !py-3">Other UPI app</a></div>
+      <div class="text-center my-3"><div id="qr" class="inline-block p-2 bg-white rounded-xl"></div><p class="text-xs text-zinc-400 mt-1">On a computer? Scan this QR with any UPI app on your phone.</p></div>
+      <div class="flex items-center justify-between gap-2 text-sm"><span>Pay to: <b id="vpa"></b></span><button id="cpVpa" class="btn alt !py-1 !px-3 text-sm">Copy ID</button></div>
+      <p id="demoNote" class="text-xs text-amber-300 mt-1">Demo mode: replace the UPI ID in the code with your own to receive real payments.</p>
+      <label for="utr" class="font-semibold block mt-3">After paying, enter the 12-digit UPI reference (UTR) from your app</label>
+      <input id="utr" inputmode="numeric" maxlength="12" placeholder="e.g. 412345678901" class="mt-1 mb-3">
+      <button id="payBtn" class="btn w-full text-lg">✔ I have paid · Confirm</button>
       <p id="payMsg" class="text-sm mt-3" aria-live="polite"></p></div><div id="paidBox" class="text-center" style="display:none"></div>
     </div>
   </div>
@@ -240,7 +244,7 @@ $('#stepper').innerHTML=names.map((n,i)=>`<div class="flex items-center gap-1 te
 function go(n){document.querySelectorAll('.step').forEach(e=>e.classList.toggle('on',e.dataset.s==n));
  $('#stepper').style.display=n>7?'none':'flex';for(let i=1;i<=7;i++){const d=$('#d'+i);d.className='dot'+(i==n?' on':i<n?' done':'')}
  scrollTo({top:0,behavior:'smooth'});
- if(n==5)dispatch(); if(n==7)calc(); if(n==8)renderDash(); window.sceneMode&&sceneMode(n)}
+ if(n==4)loadAI(); if(n==5)dispatch(); if(n==7)calc(); if(n==8)renderDash(); window.sceneMode&&sceneMode(n)}
 // ---------- helpline
 $('#help').oninput=e=>{const v=e.target.value.replace(/[^\d+]/g,'')||'112';$('#callNum').textContent=v;$('#callBig').href=$('#callTop').href='tel:'+v;$('#callTop').textContent='📞 Call '+v};
 // ---------- GPS
@@ -258,15 +262,38 @@ $('#camBtn').onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMe
  catch(e){$('#camHint').textContent='Camera unavailable or blocked. Please use “Upload photo”.'}};
 $('#snapBtn').onclick=()=>{const v=$('#vid'),c=$('#cv');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
  $('#shot').src=c.toDataURL('image/jpeg',.8);stream.getTracks().forEach(t=>t.stop());v.classList.add('hidden');gotPhoto()};
-$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('#shot').src=r.result;$('#vid').classList.add('hidden');$('#camHint').classList.add('hidden');gotPhoto()};r.readAsDataURL(f)};
-function gotPhoto(){$('#shot').classList.remove('hidden');S.photo=true;$('#verifyBtn').disabled=false;getGPS()}
+$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('#shot').src=r.result;$('#vid').classList.add('hidden');$('#camHint').classList.add('hidden');gotPhoto(f)};r.readAsDataURL(f)};
+const HASHES=[];let CLS=null,clsP=null;
+const VEH=/\b(car|cab|taxi|jeep|minivan|van|truck|pickup|trailer|tow|bus|minibus|trolleybus|moped|scooter|bike|bicycle|tricycle|helmet|ambulance|police|limousine|racer|go-kart|streetcar|tram|wreck|stretcher|neck brace|crutch|traffic light|street sign|parking meter|convertible|wagon)\b/,FIRE=/\b(fire|volcano|matchstick|torch|lighter|stove|oven|fireplace|candle)\b/;
+function loadAI(){if(clsP)return clsP;const add=src=>new Promise((ok,no)=>{const e=document.createElement('script');e.src=src;e.onload=ok;e.onerror=no;document.head.append(e)});
+ clsP=add('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js').then(()=>add('https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js')).then(()=>mobilenet.load({version:2,alpha:.5})).then(m=>CLS=m).catch(()=>null);return clsP}
+function imgStats(img){const c=document.createElement('canvas');c.width=c.height=16;const x=c.getContext('2d');x.drawImage(img,0,0,16,16);const d=x.getImageData(0,0,16,16).data,L=[];for(let i=0;i<d.length;i+=4)L.push(.3*d[i]+.59*d[i+1]+.11*d[i+2]);const m=L.reduce((a,b)=>a+b)/L.length,sd=Math.sqrt(L.reduce((a,b)=>a+(b-m)**2,0)/L.length);return {m,sd,h:L.map(v=>v>m?1:0).join('')}}
+const ham=(a,b)=>a.split('').filter((c,i)=>c!==b[i]).length;
+function syncVerify(){$('#verifyBtn').disabled=!(S.photo&&$('#decl').checked)}
+$('#decl').onchange=syncVerify;
+async function gotPhoto(f){const box=$('#imgCheck'),img=$('#shot');img.classList.remove('hidden');S.photo=false;S.review=false;syncVerify();
+ const fail=m=>{box.className='mt-3 text-sm text-yellow-300';box.textContent='❌ '+m;img.removeAttribute('src');img.classList.add('hidden');$('#camHint').classList.remove('hidden');$('#camHint').textContent='Photo rejected. Take a new photo of the accident.';$('#file').value='';S.photo=false;syncVerify()};
+ box.className='mt-3 text-sm wait';box.textContent='🔎 Checking that this is an accident photo…';
+ try{await img.decode()}catch(e){}
+ if(f){if(!/^image\/(jpeg|png|webp)$/.test(f.type))return fail('Only JPG, PNG or WebP photos are accepted.');if(f.size>8e6)return fail('Photo is too large (max 8 MB).');
+  if(f.lastModified&&Date.now()-f.lastModified>30*60*1000)return fail('This photo is older than 30 minutes. Take a fresh photo of the accident.')}
+ if(img.naturalWidth<240||img.naturalHeight<240)return fail('Photo is too small. Move closer and try again.');
+ const st=imgStats(img);
+ if(st.m<18||st.sd<10)return fail('Photo is too dark or blank. Move to a clearer view or use a light.');
+ if(HASHES.some(h=>ham(h,st.h)<=10))return fail('This photo was already used for an earlier report. Capture a new one.');
+ const mdl=await Promise.race([loadAI(),sleep(9000).then(()=>null)]);let ok=null,label='';
+ if(mdl){const re=$('#type').value==='Fire'?new RegExp(VEH.source+'|'+FIRE.source):VEH,pr=await mdl.classify(img,8),hit=pr.find(p=>p.probability>=.04&&re.test(p.className.toLowerCase()));ok=!!hit;label=(hit||pr[0]).className.split(',')[0]}
+ if(ok===false)return fail('This does not look like an accident scene (it looks like “'+label+'”). Photograph the vehicles, road or injured person and try again.');
+ S.photo=true;S.hash=st.h;S.review=ok===null;
+ box.className='mt-3 text-sm ok';box.textContent=ok?'✅ Accident scene cues found (“'+label+'”). Tick the confirmation to continue.':'⚠️ Automatic check is unavailable right now, so this photo will go to the police for manual review. Tick the confirmation to continue.';
+ syncVerify();getGPS()}
 // ---------- police verification
 $('#verifyBtn').onclick=async()=>{const b=$('#verifyBtn');b.disabled=true;const L=$('#vlog');L.innerHTML='';
  const steps=['Analysing photo for incident signs','Attaching GPS coordinates','Pinging police control room','Police acknowledged · case opened'];
  for(let i=0;i<steps.length;i++){const li=document.createElement('li');li.innerHTML='<span class="wait">⏳</span> '+steps[i];L.append(li);
   if(i==1){const p=await getGPS();li.innerHTML+=`<br><span class="text-zinc-400 text-xs">${fmt(p)}</span>`}
   await sleep(900);li.firstChild.outerHTML='<span class="ok">✔</span>';$('#vbar').style.width=(i+1)*25+'%';window.ping&&ping()}
- const id='CASE-'+Math.floor(1000+Math.random()*9000);L.insertAdjacentHTML('beforeend',`<li class="ok font-bold">Verified · ${id}</li>`);S.case=id;$('#to4').classList.remove('hidden')};
+ const id='CASE-'+Math.floor(1000+Math.random()*9000);L.insertAdjacentHTML('beforeend',`<li class="ok font-bold">Verified · ${id}${S.review?' · photo flagged for manual police review':''}</li>`);S.case=id;if(S.hash)HASHES.push(S.hash);$('#to4').classList.remove('hidden')};
 $('#to4').onclick=()=>go(5);
 // ---------- hospitals & dispatch
 const HOSP=[['Manipal Hospital, Yeshwanthpur',13.0235,77.5497,'Trauma Level 1'],['M S Ramaiah Memorial',13.0306,77.5654,'Trauma Level 1'],['Aster CMI, Hebbal',13.0614,77.5947,'Multi-speciality'],['Sparsh Hospital',13.0300,77.5400,'Orthopaedic & trauma'],['Victoria Hospital',12.9634,77.5755,'Govt. emergency'],['Apollo Hospital, Bannerghatta',12.8955,77.5985,'Multi-speciality'],['Narayana Health City',12.8189,77.6906,'Cardiac & trauma']];
@@ -285,17 +312,30 @@ async function dispatch(){clearInterval(timer);S.acc=null;const p=S.pos||await g
   S.hosp.forEach((h,i)=>{if(12-t==when[i]&&accepted<0){ if(okH(h)&&(i==0||Math.random()<.5)){accepted=i;S.acc=h;HS[h.n].beds--;log(h.n+' accepted '+S.case);$('#h'+i).lastChild.outerHTML='<span class="ok text-sm font-bold">✔ ACCEPTED</span>';$('#h'+i).style.borderColor='#16a34a'}else $('#h'+i).lastChild.outerHTML='<span class="text-zinc-400 text-sm">Busy · declined</span>'}});
   window.ping&&t%3==0&&ping();
   if(accepted>=0||t<=0){clearInterval(timer);if(accepted<0){S.acc=S.hosp.find(okH)||S.hosp[0];HS[S.acc.n].beds=Math.max(0,HS[S.acc.n].beds-1);$('#h'+S.hosp.indexOf(S.acc)).lastChild.outerHTML='<span class="ok text-sm font-bold">✔ AUTO-ASSIGNED</span>'}setTimeout(assign,1200)}},1000)}
-function assign(){const h=S.acc;$('#assign').innerHTML=[['Hospital',h.n],['Distance',h.d.toFixed(1)+' km'],['Emergency unit','Trauma team + '+S.amb],['Bed','Emergency bay '+(1+Math.floor(Math.random()*9))+' reserved'],['Ambulance ETA',S.eta+' min'],['Police case',S.case||'—']].map(r=>`<div class="flex justify-between gap-3 border-b border-blue-800/50 pb-1"><dt class="text-zinc-400">${r[0]}</dt><dd class="font-bold text-right">${r[1]}</dd></div>`).join('');go(6)}
+function assign(){const h=S.acc;$('#assign').innerHTML=[['Hospital',h.n],['Distance',h.d.toFixed(1)+' km'],['Emergency unit','Trauma team + '+S.amb],['Bed','Emergency bay '+(1+Math.floor(Math.random()*9))+' reserved'],['Ambulance ETA',S.eta+' min'],['Est. fare',inr(fare().total)],['Police case',S.case||'—']].map(r=>`<div class="flex justify-between gap-3 border-b border-blue-800/50 pb-1"><dt class="text-zinc-400">${r[0]}</dt><dd class="font-bold text-right">${r[1]}</dd></div>`).join('');go(6)}
 // ---------- payment
 const inr=x=>'₹'+x.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
-function calc(){const f=Math.max(0,+$('#fee').value||0),t=f*1.05;$('#f1').textContent=inr(f);$('#f2').textContent=inr(f*.05);$('#f3').textContent=$('#payAmt').textContent=inr(t)}
-$('#fee').oninput=calc;
-$('#cn').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,16).replace(/(.{4})/g,'$1 ').trim();
-$('#ce').oninput=e=>{let v=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v};
-$('#payBtn').onclick=async()=>{const m=$('#payMsg');
- if($('#cn').value.replace(/\s/g,'').length<16||$('#ce').value.length<5||$('#cc').value.length<3||!$('#cname').value.trim()){m.className='text-sm mt-3 text-yellow-300';m.textContent='Please complete all card fields.';return}
- $('#payBtn').disabled=true;m.className='text-sm mt-3 wait';m.textContent='🔐 Encrypting & contacting bank…';await sleep(1200);m.textContent='Authorising…';await sleep(1300);
- finishCase('paid')};
+function fare(){const d=Math.max(3,S.acc?S.acc.d:5),v=Math.max(1,+$('#vict').value||1),ty=$('#type').value,h=new Date().getHours(),als=v>=3||ty==='Medical collapse'||ty==='Fire',rate=als?30:20;
+ const rows=[['Base fare · '+(als?'Advanced life support':'Basic life support'),als?1800:900],['Distance · '+d.toFixed(1)+' km × ₹'+rate,Math.round(d*rate)]];
+ if(v>1)rows.push(['Extra patients × '+(v-1),(v-1)*200]);
+ let sub=rows.reduce((a,r)=>a+r[1],0);const night=h>=22||h<6,peak=(h>=8&&h<11)||(h>=17&&h<21);
+ if(night){const x=Math.round(sub*.25);rows.push(['Night surcharge (10 pm to 6 am) +25%',x]);sub+=x}else if(peak){const x=Math.round(sub*.1);rows.push(['Peak-hour traffic +10%',x]);sub+=x}
+ return {rows,sub,total:Math.round(sub*1.05)}}
+function calc(){const F=fare();$('#fareRows').innerHTML=F.rows.map(r=>`<div class="flex justify-between gap-3 text-zinc-300"><span>${r[0]}</span><span>${inr(r[1])}</span></div>`).join('')+`<div class="flex justify-between font-semibold border-t border-blue-800 pt-1 mt-1"><span>Subtotal</span><span>${inr(F.sub)}</span></div>`;
+ $('#f2').textContent=inr(F.total-F.sub);$('#f3').textContent=$('#payAmt').textContent=inr(F.total);AMT=F.total;buildUPI()}
+const MERCHANT={vpa:'yourname@upi',name:'Viva Emergency'}; // <-- put your own UPI ID here
+let AMT=525,qr;
+function buildUPI(){S.tr=S.tr||((S.case||'RA').replace(/\W/g,'')+Math.floor(Math.random()*1e6));
+ const q=`pa=${encodeURIComponent(MERCHANT.vpa)}&pn=${encodeURIComponent(MERCHANT.name)}&am=${AMT.toFixed(2)}&cu=INR&tn=${encodeURIComponent('Viva '+(S.case||'service fee'))}&tr=${S.tr}`;
+ const L={upGpay:'tez://upi/pay?',upPhonepe:'phonepe://pay?',upPaytm:'paytmmp://pay?',upAny:'upi://pay?'};
+ for(const id in L)$('#'+id).href=L[id]+q;
+ $('#vpa').textContent=MERCHANT.vpa;$('#demoNote').style.display=MERCHANT.vpa==='yourname@upi'?'block':'none';
+ const url='upi://pay?'+q;
+ try{if(!qr)qr=new QRCode($('#qr'),{text:url,width:176,height:176,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});else{qr.clear();qr.makeCode(url)}}catch(e){$('#qr').textContent='QR unavailable'}}
+$('#cpVpa').onclick=async()=>{try{await navigator.clipboard.writeText(MERCHANT.vpa);toast('UPI ID copied')}catch(e){toast(MERCHANT.vpa)}};
+$('#payBtn').onclick=async()=>{const m=$('#payMsg'),u=$('#utr').value.trim();
+ if(!/^\d{12}$/.test(u)){m.className='text-sm mt-3 text-yellow-300';m.textContent='Enter the 12-digit UPI reference number shown in your payment app.';return}
+ $('#payBtn').disabled=true;m.className='text-sm mt-3 wait';m.textContent='🔐 Checking payment status…';await sleep(1800);S.utr=u;finishCase('paid')};
 // ---------- no-login emergency shortcuts
 function toast(m){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.className='glass fixed left-1/2 -translate-x-1/2 bottom-28 z-50 px-4 py-2 text-sm text-center';document.body.append(t)}t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3800)}
 function clr(){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
@@ -357,19 +397,19 @@ function finishCase(kind){
  if(S.unit&&S.unit.st!=='Offline')S.unit.st='Available';
  clearInterval(RT);
  if(kind==='paid'){let n=8;$('#payForm').style.display='none';const b=$('#paidBox');b.style.display='block';
-  b.innerHTML=`<div class="text-6xl">🎉</div><h3 class="text-2xl font-black mt-2">Payment successful</h3><p class="text-zinc-300 mt-1">Receipt #RA-${Math.floor(100000+Math.random()*900000)} · ${amt}</p><p class="mt-3">Case closed. Help is on the way to you. Stay calm and stay safe.</p><p class="text-sm text-sky-200 mt-2">Returning to the main page in <b id="rt">${n}</b>s</p><button class="btn mt-4" onclick="newCase()">Start next case now</button>`;
+  b.innerHTML=`<div class="text-6xl">🎉</div><h3 class="text-2xl font-black mt-2">Payment successful</h3><p class="text-zinc-300 mt-1">Receipt #VV-${Math.floor(100000+Math.random()*900000)} · ${amt}${S.utr?' · UTR '+S.utr:''}</p><p class="mt-3">Case closed. Help is on the way to you. Stay calm and stay safe.</p><p class="text-sm text-sky-200 mt-2">Returning to the main page in <b id="rt">${n}</b>s</p><button class="btn mt-4" onclick="newCase()">Start next case now</button>`;
   RT=setInterval(()=>{n--;const e=$('#rt');if(e)e.textContent=n;if(n<=0)newCase()},1000)}
  else{toast('✔ Payment link saved. Case closed, help is on the way.');RT=setTimeout(newCase,2500)}}
 function newCase(){
  clearInterval(RT);clearInterval(timer);closeOv();
  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
- Object.assign(S,{pos:null,photo:false,hosp:[],acc:null,case:null,unit:null,amb:null,eta:null});
+ Object.assign(S,{hash:null,review:false,tr:null,utr:null,pos:null,photo:false,hosp:[],acc:null,case:null,unit:null,amb:null,eta:null});
  const sh=$('#shot');sh.removeAttribute('src');sh.classList.add('hidden');const v=$('#vid');v.srcObject=null;v.classList.add('hidden');
  const c=$('#cv');c.getContext('2d').clearRect(0,0,c.width,c.height);
  $('#camHint').classList.remove('hidden');$('#camHint').textContent='Camera preview appears here';
- $('#snapBtn').disabled=true;$('#verifyBtn').disabled=true;$('#file').value='';$('#vlog').innerHTML='';$('#vbar').style.width='0';$('#to4').classList.add('hidden');$('#type').selectedIndex=0;$('#vict').value=1;
+ $('#snapBtn').disabled=true;$('#verifyBtn').disabled=true;$('#file').value='';$('#vlog').innerHTML='';$('#imgCheck').textContent='';$('#decl').checked=false;$('#vbar').style.width='0';$('#to4').classList.add('hidden');$('#type').selectedIndex=0;$('#vict').value=1;
  $('#hosp').innerHTML='';$('#count').textContent='--';['#amb','#drv','#eta'].forEach(q=>$(q).textContent='—');$('#pos').textContent='locating…';$('#assign').innerHTML='';$('#gpsOut').textContent='Location not shared yet.';
- $('#payForm').style.display='';$('#paidBox').style.display='none';$('#paidBox').innerHTML='';['#cn','#ce','#cc','#cname'].forEach(q=>$(q).value='');$('#payBtn').disabled=false;$('#payMsg').textContent='';$('#fee').value=500;calc();
+ $('#payForm').style.display='';$('#paidBox').style.display='none';$('#paidBox').innerHTML='';$('#utr').value='';$('#payBtn').disabled=false;$('#payMsg').textContent='';calc();
  go(1);toast('Ready for the next case');}
 // ---------- full-screen 3D human nervous system
 (function(){
