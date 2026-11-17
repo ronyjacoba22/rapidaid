@@ -40,11 +40,11 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
 <div class="wrap min-h-screen">
 <header class="sticky top-0 z-30 glass !rounded-none">
   <div class="max-w-5xl mx-auto flex items-center justify-between px-4 py-3 gap-3">
-    <button onclick="go(1)" class="flex items-center gap-2 font-black text-xl text-left" aria-label="Viva home"><span class="text-yellow-400 text-3xl">✚</span><span class="leading-tight">Viva<span class="block text-[10px] sm:text-xs font-medium italic text-yellow-200 tracking-wide">A Ray of Hope in the Darkest Hours</span></span></button>
+    <button onclick="go(1)" class="flex items-center gap-2 font-black text-xl text-left" aria-label="Viva home"><span class="text-yellow-400 text-3xl">✚</span><span class="leading-tight text-blue-400">Viva<span class="block text-[10px] sm:text-xs font-medium italic text-yellow-200 tracking-wide">A Ray of Hope in the Darkest Hours</span></span></button>
     <nav class="hidden sm:flex gap-5 text-sm font-semibold" aria-label="Main">
       <button onclick="go(1)">About</button><button onclick="go(2)">Mission</button><button onclick="go(3)">Contact</button><button onclick="go(4)">Report</button><button onclick="go(8)">Dashboard</button>
     </nav>
-    <a id="callTop" href="tel:112" class="btn text-sm">📞 Call 112</a>
+    <div class="flex items-center gap-2"><button id="langBtn" class="btn alt text-sm !px-3" aria-label="Change language">🌐 हिन्दी</button><a id="callTop" href="tel:112" class="btn text-sm">📞 Call 112</a></div>
   </div>
   <div class="max-w-5xl mx-auto px-4 pb-3 flex items-center gap-2 overflow-x-auto" id="stepper" aria-label="Progress"></div>
 </header>
@@ -54,7 +54,7 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
 <!-- 1 About -->
 <section class="step" data-s="1">
   <div class="py-8 text-center">
-    <h2 class="text-6xl sm:text-8xl font-black tracking-tight text-yellow-400" style="text-shadow:0 0 30px rgba(245,184,46,.45)">Viva</h2><p class="text-lg sm:text-2xl italic text-sky-200 mb-5">A Ray of Hope in the Darkest Hours</p>
+    <h2 class="text-6xl sm:text-8xl font-black tracking-tight text-blue-500" style="text-shadow:0 0 34px rgba(59,130,246,.65)">Viva</h2><p class="text-lg sm:text-2xl italic text-sky-200 mb-5">A Ray of Hope in the Darkest Hours</p>
     <p class="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-sky-300 text-sm font-semibold mb-4">Accident emergency response · Every second counts</p>
     <h1 class="text-4xl sm:text-6xl font-black leading-tight text-sky-300" style="text-shadow:0 2px 14px rgba(0,0,0,.75)">See an accident?<br><span class="text-blue-500">Snap. Send. Saved.</span></h1>
     <p class="mt-4 text-lg text-zinc-300 max-w-2xl mx-auto">One photo alerts the police, dispatches an ambulance and notifies every nearby hospital at the same time.</p>
@@ -126,8 +126,8 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
   <div class="grid md:grid-cols-2 gap-4">
     <div class="glass p-5">
       <div class="aspect-video bg-black rounded-xl overflow-hidden grid place-items-center relative">
-        <video id="vid" class="w-full h-full object-cover hidden" playsinline muted></video>
-        <img id="shot" class="w-full h-full object-cover hidden" alt="Captured incident photo">
+        <video id="vid" class="absolute inset-0 w-full h-full object-cover hidden" playsinline muted></video>
+        <img id="shot" class="absolute inset-0 w-full h-full object-cover hidden" alt="Captured incident photo">
         <span id="camHint" class="text-zinc-500 text-center px-4">Camera preview appears here</span>
       </div>
       <canvas id="cv" class="hidden"></canvas>
@@ -135,13 +135,14 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
         <button id="camBtn" class="btn">📷 Open camera</button>
         <button id="snapBtn" class="btn alt" disabled>⚪ Capture</button>
       </div>
+      <button id="flipBtn" class="btn alt hidden mt-2 w-full">🔄 Switch camera</button>
       <div id="imgCheck" class="mt-3 text-sm" aria-live="polite"></div>
       <label class="btn alt block text-center mt-2 cursor-pointer">⬆ Upload photo
         <input id="file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" class="hidden"></label>
     </div>
     <div class="glass p-5">
       <label for="type" class="font-semibold">Type of emergency</label>
-      <select id="type" class="mt-1 mb-3"><option>Road accident</option><option>Fire</option><option>Medical collapse</option><option>Other</option></select>
+      <select id="type" class="mt-1 mb-3"><option value="Road accident">Road accident</option><option value="Fire">Fire</option><option value="Medical collapse">Medical collapse</option><option value="Other">Other</option></select>
       <label for="vict" class="font-semibold">People injured (approx.)</label>
       <input id="vict" type="number" min="1" value="1" class="mt-1 mb-3">
       <label class="flex items-start gap-2 text-sm mb-3"><input id="decl" type="checkbox" class="!w-5 !h-5 !p-0 mt-0.5"><span>I confirm this photo shows a real accident happening now. False reports are punishable by law.</span></label>
@@ -244,7 +245,7 @@ $('#stepper').innerHTML=names.map((n,i)=>`<div class="flex items-center gap-1 te
 function go(n){document.querySelectorAll('.step').forEach(e=>e.classList.toggle('on',e.dataset.s==n));
  $('#stepper').style.display=n>7?'none':'flex';for(let i=1;i<=7;i++){const d=$('#d'+i);d.className='dot'+(i==n?' on':i<n?' done':'')}
  scrollTo({top:0,behavior:'smooth'});
- if(n==4)loadAI(); if(n==5)dispatch(); if(n==7)calc(); if(n==8)renderDash(); window.sceneMode&&sceneMode(n)}
+ if(n!==4)stopCam(); if(n==4)loadAI(); if(n==5)dispatch(); if(n==7)calc(); if(n==8)renderDash(); window.sceneMode&&sceneMode(n)}
 // ---------- helpline
 $('#help').oninput=e=>{const v=e.target.value.replace(/[^\d+]/g,'')||'112';$('#callNum').textContent=v;$('#callBig').href=$('#callTop').href='tel:'+v;$('#callTop').textContent='📞 Call '+v};
 // ---------- GPS
@@ -256,12 +257,20 @@ function getGPS(){return new Promise(res=>{
 const fmt=p=>`${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`+(p.fb?' (demo fallback: GPS blocked)':p.acc?` (±${Math.round(p.acc)} m)`:'');
 $('#gpsBtn').onclick=async()=>{$('#gpsOut').textContent='Locating…';const p=await getGPS();$('#gpsOut').textContent='📍 '+fmt(p)};
 // ---------- camera
-let stream;
-$('#camBtn').onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
- const v=$('#vid');v.srcObject=stream;v.classList.remove('hidden');$('#shot').classList.add('hidden');$('#camHint').classList.add('hidden');await v.play();$('#snapBtn').disabled=false}
- catch(e){$('#camHint').textContent='Camera unavailable or blocked. Please use “Upload photo”.'}};
-$('#snapBtn').onclick=()=>{const v=$('#vid'),c=$('#cv');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
- $('#shot').src=c.toDataURL('image/jpeg',.8);stream.getTracks().forEach(t=>t.stop());v.classList.add('hidden');gotPhoto()};
+let stream,facing='environment';
+function stopCam(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('#vid').srcObject=null}
+async function openCam(){stopCam();const hint=$('#camHint');$('#snapBtn').disabled=true;
+ const say=m=>{hint.classList.remove('hidden');$('#vid').classList.add('hidden');hint.textContent=m};
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return say('This browser or page cannot open the camera (it needs a secure https link). Please use “Upload photo”.');
+ let err;for(const c of [{video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:720}},audio:false},{video:true,audio:false}]){try{stream=await navigator.mediaDevices.getUserMedia(c);break}catch(e){err=e;if(e.name==='NotAllowedError'||e.name==='SecurityError')break}}
+ if(!stream){const n=err&&err.name;return say(n==='NotAllowedError'?'Camera permission is blocked. Tap the lock icon next to the web address, allow Camera, then press Open camera again. Or use “Upload photo”.':n==='NotFoundError'?'No camera was found on this device. Please use “Upload photo”.':n==='NotReadableError'?'The camera is being used by another app or tab. Close it and try again.':'Camera could not start. Please use “Upload photo”.')}
+ const v=$('#vid');v.srcObject=stream;v.classList.remove('hidden');$('#shot').classList.add('hidden');hint.classList.add('hidden');$('#imgCheck').textContent='';
+ try{await v.play()}catch(e){}
+ await new Promise(r=>{if(v.videoWidth)return r();v.onloadedmetadata=r;setTimeout(r,2500)});
+ $('#snapBtn').disabled=!v.videoWidth;$('#flipBtn').classList.remove('hidden')}
+$('#camBtn').onclick=openCam;
+$('#flipBtn').onclick=()=>{facing=facing==='environment'?'user':'environment';openCam()};
+$('#snapBtn').onclick=()=>{const v=$('#vid'),c=$('#cv');if(!v.videoWidth)return;c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);$('#shot').src=c.toDataURL('image/jpeg',.85);stopCam();v.classList.add('hidden');$('#snapBtn').disabled=true;gotPhoto()};
 $('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('#shot').src=r.result;$('#vid').classList.add('hidden');$('#camHint').classList.add('hidden');gotPhoto(f)};r.readAsDataURL(f)};
 const HASHES=[];let CLS=null,clsP=null;
 const VEH=/\b(car|cab|taxi|jeep|minivan|van|truck|pickup|trailer|tow|bus|minibus|trolleybus|moped|scooter|bike|bicycle|tricycle|helmet|ambulance|police|limousine|racer|go-kart|streetcar|tram|wreck|stretcher|neck brace|crutch|traffic light|street sign|parking meter|convertible|wagon)\b/,FIRE=/\b(fire|volcano|matchstick|torch|lighter|stove|oven|fireplace|candle)\b/;
@@ -279,11 +288,13 @@ async function gotPhoto(f){const box=$('#imgCheck'),img=$('#shot');img.classList
   if(f.lastModified&&Date.now()-f.lastModified>30*60*1000)return fail('This photo is older than 30 minutes. Take a fresh photo of the accident.')}
  if(img.naturalWidth<240||img.naturalHeight<240)return fail('Photo is too small. Move closer and try again.');
  const st=imgStats(img);
- if(st.m<18||st.sd<10)return fail('Photo is too dark or blank. Move to a clearer view or use a light.');
- if(HASHES.some(h=>ham(h,st.h)<=10))return fail('This photo was already used for an earlier report. Capture a new one.');
+ if(st.m<8||st.sd<5)return fail('Photo is too dark or blank. Move to a clearer view or use a light.');
+ if(f&&HASHES.some(h=>ham(h,st.h)<=10))return fail('This photo was already used for an earlier report. Capture a new one.');
  const mdl=await Promise.race([loadAI(),sleep(9000).then(()=>null)]);let ok=null,label='';
  if(mdl){const re=$('#type').value==='Fire'?new RegExp(VEH.source+'|'+FIRE.source):VEH,pr=await mdl.classify(img,8),hit=pr.find(p=>p.probability>=.04&&re.test(p.className.toLowerCase()));ok=!!hit;label=(hit||pr[0]).className.split(',')[0]}
- if(ok===false)return fail('This does not look like an accident scene (it looks like “'+label+'”). Photograph the vehicles, road or injured person and try again.');
+ if(ok===false){S.hash=st.h;box.className='mt-3 text-sm text-yellow-300';box.textContent='❌ This does not look like an accident scene (it looks like “'+label+'”). Retake a photo of the vehicles, road or injured person.';
+  const b=document.createElement('button');b.className='btn alt !py-2 !px-3 text-sm mt-2 block';b.textContent='It is an accident, send for police review';
+  b.onclick=()=>{S.photo=true;S.review=true;box.className='mt-3 text-sm wait';box.textContent='⚠️ Photo will go to the police for manual review. Tick the confirmation to continue.';syncVerify();getGPS()};box.append(b);return}
  S.photo=true;S.hash=st.h;S.review=ok===null;
  box.className='mt-3 text-sm ok';box.textContent=ok?'✅ Accident scene cues found (“'+label+'”). Tick the confirmation to continue.':'⚠️ Automatic check is unavailable right now, so this photo will go to the police for manual review. Tick the confirmation to continue.';
  syncVerify();getGPS()}
@@ -356,8 +367,8 @@ $('#shakeBtn').onclick=async()=>{try{if(!window.DeviceMotionEvent){$('#shakeMsg'
 addEventListener('devicemotion',e=>{if(!shakeOn)return;const a=e.accelerationIncludingGravity;if(!a)return;const m=Math.abs(a.x)+Math.abs(a.y)+Math.abs(a.z);
  if(lv!==null&&Math.abs(m-lv)>28){const n=Date.now();sh=sh.filter(t=>n-t<2000);sh.push(n);if(sh.length>=3){sh=[];startSOS('shake ×3')}}lv=m});
 $('#voiceBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('#voiceMsg').textContent='Not supported in this browser';return}
- const r=new SR();r.continuous=true;r.interimResults=true;r.lang='en-IN';
- r.onresult=e=>{const t=[...e.results].slice(-2).map(x=>x[0].transcript.toLowerCase()).join(' ');if(/\b(help|emergency|accident|sos)\b/.test(t)){r.onend=null;r.stop();startSOS('voice command')}};
+ const r=new SR();r.continuous=true;r.interimResults=true;r.lang=LANG==='hi'?'hi-IN':'en-IN';
+ r.onresult=e=>{const t=[...e.results].slice(-2).map(x=>x[0].transcript.toLowerCase()).join(' ');if(/\b(help|emergency|accident|sos)\b|मदद|बचाओ|एम्बुलेंस|दुर्घटना|आपातकाल/.test(t)){r.onend=null;r.stop();startSOS('voice command')}};
  r.onend=()=>{try{r.start()}catch(e){}};
  try{r.start();$('#voiceMsg').textContent='Listening ✔ (keep this tab open)'}catch(e){$('#voiceMsg').textContent='Microphone unavailable'}};
 // ---------- dashboards
@@ -407,10 +418,71 @@ function newCase(){
  const sh=$('#shot');sh.removeAttribute('src');sh.classList.add('hidden');const v=$('#vid');v.srcObject=null;v.classList.add('hidden');
  const c=$('#cv');c.getContext('2d').clearRect(0,0,c.width,c.height);
  $('#camHint').classList.remove('hidden');$('#camHint').textContent='Camera preview appears here';
- $('#snapBtn').disabled=true;$('#verifyBtn').disabled=true;$('#file').value='';$('#vlog').innerHTML='';$('#imgCheck').textContent='';$('#decl').checked=false;$('#vbar').style.width='0';$('#to4').classList.add('hidden');$('#type').selectedIndex=0;$('#vict').value=1;
+ $('#snapBtn').disabled=true;$('#verifyBtn').disabled=true;$('#file').value='';$('#vlog').innerHTML='';$('#imgCheck').textContent='';$('#decl').checked=false;$('#flipBtn').classList.add('hidden');$('#vbar').style.width='0';$('#to4').classList.add('hidden');$('#type').selectedIndex=0;$('#vict').value=1;
  $('#hosp').innerHTML='';$('#count').textContent='--';['#amb','#drv','#eta'].forEach(q=>$(q).textContent='—');$('#pos').textContent='locating…';$('#assign').innerHTML='';$('#gpsOut').textContent='Location not shared yet.';
  $('#payForm').style.display='';$('#paidBox').style.display='none';$('#paidBox').innerHTML='';$('#utr').value='';$('#payBtn').disabled=false;$('#payMsg').textContent='';calc();
  go(1);toast('Ready for the next case');}
+// ---------- Hindi translator (built in, works offline)
+const HI={
+'About':'हमारे बारे में','Mission':'मिशन','Contact':'संपर्क','Report':'रिपोर्ट','Dashboard':'डैशबोर्ड','Dispatch':'डिस्पैच','Assign':'असाइन','Pay':'भुगतान',
+'A Ray of Hope in the Darkest Hours':'अँधेरे समय में उम्मीद की एक किरण',
+'Accident emergency response · Every second counts':'दुर्घटना आपातकालीन सेवा · हर सेकंड कीमती है',
+'See an accident?':'दुर्घटना देखी?','Snap. Send. Saved.':'फोटो लो। भेजो। जान बचाओ।',
+'One photo alerts the police, dispatches an ambulance and notifies every nearby hospital at the same time.':'एक फोटो से पुलिस को सूचना मिलती है, एम्बुलेंस रवाना होती है और आसपास के सभी अस्पतालों को एक साथ खबर पहुँचती है।',
+'Instant SOS · 1 tap':'तुरंत SOS · 1 टैप','Report with photo':'फोटो के साथ रिपोर्ट करें','No login · No sign-up · Works the moment you open it':'न लॉगिन · न साइन-अप · खोलते ही काम करता है',
+'About Viva':'Viva के बारे में','Viva is a connected emergency response platform. It links bystanders, police, ambulance crews and hospitals in one fast flow, so that help is on its way before anyone has to search for a phone number.':'Viva एक जुड़ा हुआ आपातकालीन सहायता मंच है। यह राहगीरों, पुलिस, एम्बुलेंस दल और अस्पतालों को एक तेज़ प्रवाह में जोड़ता है, ताकि किसी को फोन नंबर खोजने से पहले ही मदद रवाना हो जाए।',
+'Read our mission & vision':'हमारा मिशन और विज़न पढ़ें','GPS first':'पहले GPS','Nearest hospitals chosen automatically':'सबसे नज़दीकी अस्पताल अपने-आप चुने जाते हैं','Police verified':'पुलिस द्वारा सत्यापित','Incident forwarded to control room':'घटना की सूचना कंट्रोल रूम को भेजी जाती है','Multi-hospital broadcast':'कई अस्पतालों को एक साथ सूचना','First to accept gets the patient':'जो पहले स्वीकार करे, उसे मरीज़ मिलता है','Contact & quick access':'संपर्क और त्वरित पहुँच','Crew & hospital dashboard':'क्रू और अस्पताल डैशबोर्ड',
+'Our mission & vision':'हमारा मिशन और विज़न','Our Mission':'हमारा मिशन','Our Vision':'हमारा विज़न',
+'Our mission is to leverage technology to make emergency assistance faster, smarter, more accessible and more coordinated.':'हमारा मिशन तकनीक की मदद से आपातकालीन सहायता को अधिक तेज़, समझदार, सुलभ और समन्वित बनाना है।',
+'We aim to develop an integrated digital platform that connects accident victims, nearby hospitals, ambulance services and potential first responders through real-time location tracking, instant emergency notifications and efficient communication.':'हम एक एकीकृत डिजिटल मंच बनाना चाहते हैं जो रियल-टाइम लोकेशन ट्रैकिंग, तुरंत आपातकालीन सूचनाओं और कुशल संवाद के ज़रिए दुर्घटना पीड़ितों, नज़दीकी अस्पतालों, एम्बुलेंस सेवाओं और संभावित प्रथम उत्तरदाताओं को जोड़े।',
+'By reducing the gap between the occurrence of an accident and the arrival of assistance, we strive to overcome delays caused by a lack of awareness, limited accessibility and fragmented emergency communication.':'दुर्घटना होने और सहायता पहुँचने के बीच की दूरी घटाकर हम जागरूकता की कमी, सीमित पहुँच और बिखरे हुए आपातकालीन संचार से होने वाली देरी को दूर करने का प्रयास करते हैं।',
+'Beyond technology, our mission is rooted in humanity. We want to encourage a society where people do not simply witness an emergency but have the opportunity to become part of the response.':'तकनीक से परे, हमारा मिशन मानवता में निहित है। हम ऐसा समाज बनाना चाहते हैं जहाँ लोग आपात स्थिति को केवल देखने वाले न रहें, बल्कि मदद का हिस्सा बन सकें।',
+'We believe that technology is truly meaningful when it protects what matters most — human life.':'हमारा मानना है कि तकनीक तभी सार्थक है जब वह सबसे ज़रूरी चीज़ — मानव जीवन — की रक्षा करे।',
+'Because someone else’s ordinary day should not become a family’s worst nightmare.':'क्योंकि किसी और का साधारण दिन किसी परिवार के लिए सबसे बुरा सपना नहीं बनना चाहिए।',
+'We envision a world where no life is lost simply because help could not reach in time. A world where geographical barriers, communication gaps and delayed responses never stand between a person in need and the help they deserve.':'हम ऐसी दुनिया की कल्पना करते हैं जहाँ कोई जान सिर्फ़ इसलिए न जाए कि मदद समय पर नहीं पहुँच सकी। ऐसी दुनिया जहाँ भौगोलिक बाधाएँ, संचार की कमियाँ और देर से मिलने वाली प्रतिक्रिया किसी ज़रूरतमंद और उसके हक़ की मदद के बीच कभी न आएँ।',
+'Our vision is to create a connected and compassionate emergency response ecosystem where technology becomes a bridge between an accident and assistance, transforming helpless moments into opportunities for hope.':'हमारा विज़न एक जुड़ा हुआ और संवेदनशील आपातकालीन सहायता तंत्र बनाना है, जहाँ तकनीक दुर्घटना और सहायता के बीच पुल बने और बेबसी के पलों को उम्मीद के अवसरों में बदल दे।',
+'Because behind every accident is not just a victim, but a human being, a family, dreams yet to be fulfilled, and loved ones waiting for them to return home.':'क्योंकि हर दुर्घटना के पीछे सिर्फ़ एक पीड़ित नहीं, बल्कि एक इंसान, एक परिवार, अधूरे सपने और घर लौटने का इंतज़ार करते अपने होते हैं।',
+'We aspire to make every second meaningful and every life matter.':'हमारी आकांक्षा है कि हर सेकंड सार्थक हो और हर जीवन मायने रखे।',
+'Primary helpline number':'मुख्य हेल्पलाइन नंबर','Call':'कॉल करें','now':'अभी','Change the number to your local helpline. The call buttons update instantly.':'इसे अपने स्थानीय हेल्पलाइन नंबर से बदलें। कॉल बटन तुरंत अपडेट हो जाते हैं।',
+'Ambulance':'एम्बुलेंस','Police':'पुलिस','Fire':'आग','Unified emergency':'एकीकृत आपातकालीन','Enable my GPS location':'मेरी GPS लोकेशन चालू करें','Location not shared yet.':'लोकेशन अभी साझा नहीं हुई।','Locating…':'लोकेशन खोज रहे हैं…',
+'Emergency shortcuts · no login, no typing':'आपातकालीन शॉर्टकट · न लॉगिन, न टाइपिंग','Set these up once, calmly, so you never navigate in a crisis. Every trigger gives a 3-second cancel window against false alarms.':'इन्हें एक बार शांति से सेट कर लें ताकि संकट में कुछ खोजना न पड़े। हर ट्रिगर पर झूठे अलार्म से बचने के लिए 3 सेकंड रद्द करने का समय मिलता है।',
+'One-tap quick link':'एक-टैप क्विक लिंक','Put it on your home screen, a QR sticker or an NFC tag. It opens straight into SOS.':'इसे होम स्क्रीन, QR स्टिकर या NFC टैग पर रखें। यह सीधे SOS में खुलता है।','Copy quick link':'क्विक लिंक कॉपी करें',
+'Shake phone 3×':'फोन 3 बार हिलाएँ','Works even if your hands are shaking or you can’t see the screen.':'हाथ काँप रहे हों या स्क्रीन न दिखे, तब भी काम करता है।','Enable shake-to-SOS':'शेक-टू-SOS चालू करें',
+'Voice trigger':'आवाज़ से SOS','Say “help”, “emergency” or “SOS”. Keep this tab open.':'“help”, “emergency” या “SOS” बोलें। यह टैब खुला रखें।','Enable voice trigger':'आवाज़ ट्रिगर चालू करें','Press S 3× fast':'S को 3 बार जल्दी दबाएँ',
+'Always on for desktop. Also add to Home Screen: iPhone Share → Add to Home Screen · Android ⋮ → Install / Add to Home screen.':'डेस्कटॉप पर हमेशा चालू। होम स्क्रीन पर भी जोड़ें: iPhone में Share → Add to Home Screen · Android में ⋮ → Install / Add to Home screen।','Report an emergency':'आपात स्थिति की रिपोर्ट करें',
+'Report emergency':'आपात स्थिति की रिपोर्ट','Camera preview appears here':'कैमरा प्रीव्यू यहाँ दिखेगा','Open camera':'कैमरा खोलें','Capture':'फोटो लें','Upload photo':'फोटो अपलोड करें','Switch camera':'कैमरा बदलें',
+'Type of emergency':'आपात स्थिति का प्रकार','Road accident':'सड़क दुर्घटना','Medical collapse':'चिकित्सीय आपात (बेहोशी/गिरना)','Other':'अन्य','People injured (approx.)':'घायल लोग (लगभग)',
+'I confirm this photo shows a real accident happening now. False reports are punishable by law.':'मैं पुष्टि करता/करती हूँ कि यह फोटो अभी हो रही असली दुर्घटना की है। झूठी रिपोर्ट कानूनन दंडनीय है।',
+'Verify & alert police':'सत्यापित करें और पुलिस को सूचित करें','Analysing photo for incident signs':'फोटो में दुर्घटना के संकेत जाँच रहे हैं','Attaching GPS coordinates':'GPS निर्देशांक जोड़ रहे हैं','Pinging police control room':'पुलिस कंट्रोल रूम को सूचना भेज रहे हैं','Police acknowledged · case opened':'पुलिस ने पावती दी · केस दर्ज','Dispatch ambulance':'एम्बुलेंस भेजें',
+'Checking that this is an accident photo…':'जाँच रहे हैं कि यह दुर्घटना की फोटो है…','Only JPG, PNG or WebP photos are accepted.':'केवल JPG, PNG या WebP फोटो मान्य हैं।','Photo is too large (max 8 MB).':'फोटो बहुत बड़ी है (अधिकतम 8 MB)।','This photo is older than 30 minutes. Take a fresh photo of the accident.':'यह फोटो 30 मिनट से पुरानी है। दुर्घटना की नई फोटो लें।','Photo is too small. Move closer and try again.':'फोटो बहुत छोटी है। पास जाकर दोबारा लें।','Photo is too dark or blank. Move to a clearer view or use a light.':'फोटो बहुत अँधेरी या खाली है। साफ़ दृश्य में जाएँ या लाइट जलाएँ।','This photo was already used for an earlier report. Capture a new one.':'यह फोटो पहले की रिपोर्ट में इस्तेमाल हो चुकी है। नई फोटो लें।',
+'Automatic check is unavailable right now, so this photo will go to the police for manual review. Tick the confirmation to continue.':'स्वचालित जाँच अभी उपलब्ध नहीं है, इसलिए यह फोटो पुलिस की मैन्युअल समीक्षा के लिए जाएगी। जारी रखने के लिए पुष्टि पर टिक करें।','Photo will go to the police for manual review. Tick the confirmation to continue.':'फोटो पुलिस की मैन्युअल समीक्षा के लिए जाएगी। जारी रखने के लिए पुष्टि पर टिक करें।','It is an accident, send for police review':'यह दुर्घटना है, पुलिस समीक्षा के लिए भेजें',
+'Photo rejected. Take a new photo of the accident.':'फोटो अस्वीकार हुई। दुर्घटना की नई फोटो लें।','Camera permission is blocked. Tap the lock icon next to the web address, allow Camera, then press Open camera again. Or use “Upload photo”.':'कैमरा अनुमति बंद है। वेब पते के पास लॉक आइकन दबाकर कैमरा की अनुमति दें, फिर “कैमरा खोलें” दोबारा दबाएँ। या “फोटो अपलोड करें” इस्तेमाल करें।','No camera was found on this device. Please use “Upload photo”.':'इस डिवाइस में कैमरा नहीं मिला। कृपया “फोटो अपलोड करें” इस्तेमाल करें।','The camera is being used by another app or tab. Close it and try again.':'कैमरा किसी दूसरे ऐप या टैब में चल रहा है। उसे बंद करके दोबारा कोशिश करें।','Camera could not start. Please use “Upload photo”.':'कैमरा शुरू नहीं हो सका। कृपया “फोटो अपलोड करें” इस्तेमाल करें।','This browser or page cannot open the camera (it needs a secure https link). Please use “Upload photo”.':'यह ब्राउज़र या पेज कैमरा नहीं खोल सकता (इसके लिए सुरक्षित https लिंक चाहिए)। कृपया “फोटो अपलोड करें” इस्तेमाल करें।',
+'Ambulance dispatch & hospital broadcast':'एम्बुलेंस डिस्पैच और अस्पताल सूचना','Unit:':'यूनिट:','Driver:':'चालक:','ETA:':'पहुँचने का समय:','Your position:':'आपकी लोकेशन:','seconds left for hospitals to respond':'अस्पतालों के जवाब के लिए बचे सेकंड','Broadcast to nearest hospitals (GPS sorted)':'सबसे नज़दीकी अस्पतालों को सूचना (GPS के अनुसार)','nearest':'सबसे नज़दीक','Broadcasting…':'सूचना भेजी जा रही है…','ACCEPTED':'स्वीकार','Busy · declined':'व्यस्त · अस्वीकार','AUTO-ASSIGNED':'स्वतः असाइन',
+'Patient accepted':'मरीज़ स्वीकार किया गया','Emergency units are on the way.':'आपातकालीन यूनिट रास्ते में हैं।','Hospital':'अस्पताल','Distance':'दूरी','Emergency unit':'आपातकालीन यूनिट','Bed':'बिस्तर','Ambulance ETA':'एम्बुलेंस पहुँचने का समय','Est. fare':'अनुमानित किराया','Police case':'पुलिस केस',
+'Continue to payment':'भुगतान पर जाएँ','Pay later · help is never delayed':'बाद में भुगतान करें · मदद में देरी नहीं होगी','Payment is never required before help is sent.':'मदद भेजने से पहले भुगतान कभी ज़रूरी नहीं है।',
+'Service payment':'सेवा भुगतान','Ambulance fare estimate':'एम्बुलेंस किराया अनुमान','Worked out from live distance, number of patients, emergency type and time of day.':'लाइव दूरी, मरीज़ों की संख्या, आपात स्थिति के प्रकार और समय के आधार पर निकाला गया।','Subtotal':'उप-योग','Platform tax (5%)':'प्लेटफ़ॉर्म कर (5%)','Total':'कुल',
+'Estimate only. The crew confirms the final fare, and nothing is charged before help is dispatched.':'यह केवल अनुमान है। अंतिम किराया क्रू तय करेगा, और मदद भेजे जाने से पहले कोई शुल्क नहीं लिया जाता।',
+'You pay inside your own UPI app. No card or bank details are typed or stored here, and your UPI PIN never reaches this site.':'आप अपने ही UPI ऐप में भुगतान करते हैं। यहाँ कोई कार्ड या बैंक विवरण नहीं डाला या सहेजा जाता, और आपका UPI PIN इस साइट तक कभी नहीं पहुँचता।',
+'Amount to pay:':'देय राशि:','Other UPI app':'अन्य UPI ऐप','On a computer? Scan this QR with any UPI app on your phone.':'कंप्यूटर पर हैं? अपने फोन के किसी भी UPI ऐप से यह QR स्कैन करें।','Pay to:':'भुगतान किसे:','Copy ID':'ID कॉपी करें','Demo mode: replace the UPI ID in the code with your own to receive real payments.':'डेमो मोड: असली भुगतान पाने के लिए कोड में UPI ID अपनी ID से बदलें।',
+'After paying, enter the 12-digit UPI reference (UTR) from your app':'भुगतान के बाद अपने ऐप से 12 अंकों का UPI रेफ़रेंस (UTR) डालें','I have paid · Confirm':'मैंने भुगतान कर दिया · पुष्टि करें','Enter the 12-digit UPI reference number shown in your payment app.':'अपने पेमेंट ऐप में दिखा 12 अंकों का UPI रेफ़रेंस नंबर डालें।','Checking payment status…':'भुगतान की स्थिति जाँच रहे हैं…',
+'Payment successful':'भुगतान सफल','Case closed. Help is on the way to you. Stay calm and stay safe.':'केस बंद हुआ। मदद आप तक पहुँच रही है। शांत रहें और सुरक्षित रहें।','Returning to the main page in':'मुख्य पेज पर वापसी में','s':'सेकंड','Start next case now':'अगला केस अभी शुरू करें',
+'Sending SOS to police and hospitals…':'पुलिस और अस्पतालों को SOS भेजा जा रहा है…','Send now':'अभी भेजें','Cancel · false alarm':'रद्द करें · गलत अलार्म','SOS sent. Alerting police and hospitals with your GPS.':'SOS भेज दिया गया। आपकी GPS लोकेशन के साथ पुलिस और अस्पतालों को सूचित किया जा रहा है।','Ready for the next case':'अगले केस के लिए तैयार','Payment link saved. Case closed, help is on the way.':'भुगतान लिंक सहेज लिया गया। केस बंद, मदद रास्ते में है।','UPI ID copied':'UPI ID कॉपी हो गई',
+'Response dashboard':'रिस्पॉन्स डैशबोर्ड','Ambulance driver':'एम्बुलेंस चालक','Your unit':'आपकी यूनिट','Update status':'स्थिति अपडेट करें','Update':'अपडेट','Live assignment':'लाइव असाइनमेंट','Fleet':'बेड़ा','Closed cases':'बंद केस','Admission status':'भर्ती की स्थिति','General beds':'सामान्य बिस्तर','ICU beds':'ICU बिस्तर','Trauma team on standby':'ट्रॉमा टीम तैयार','Incoming alert':'आने वाला अलर्ट','All hospitals':'सभी अस्पताल',
+'Available':'उपलब्ध','En route':'रास्ते में','On scene':'घटनास्थल पर','Transporting':'मरीज़ को ले जा रहे हैं','At hospital':'अस्पताल में','Offline':'ऑफ़लाइन','Accepting':'स्वीकार कर रहे','Busy':'व्यस्त','Diverted':'अन्यत्र भेजा जा रहा'};
+const PAT=[[/^Call (.+)$/,'कॉल करें $1'],[/^Accident scene cues found \(“(.*)”\)\. Tick the confirmation to continue\.$/,'दुर्घटना स्थल के संकेत मिले (“$1”)। जारी रखने के लिए पुष्टि पर टिक करें।'],[/^This does not look like an accident scene \(it looks like “(.*)”\)\. Retake a photo of the vehicles, road or injured person\.$/,'यह दुर्घटना स्थल जैसा नहीं दिखता (यह “$1” जैसा दिखता है)। वाहनों, सड़क या घायल व्यक्ति की फोटो दोबारा लें।']];
+const SUB=[[/\bkm\b/g,'किमी'],[/\bmin\b/g,'मिनट'],[/\bbeds\b/g,'बिस्तर'],[/Triggered by:/,'शुरू करने का तरीका:'],[/Verified/,'सत्यापित'],[/photo flagged for manual police review/,'फोटो मैन्युअल पुलिस समीक्षा के लिए चिह्नित'],[/Receipt/,'रसीद'],[/Trauma Level 1/,'ट्रॉमा लेवल 1'],[/Multi-speciality/,'बहु-विशेषज्ञता'],[/Orthopaedic & trauma/,'हड्डी रोग और ट्रॉमा'],[/Govt\. emergency/,'सरकारी आपातकालीन'],[/Cardiac & trauma/,'हृदय और ट्रॉमा'],[/Trauma team \+/,'ट्रॉमा टीम +'],[/Emergency bay/,'इमरजेंसी बे'],[/reserved/,'आरक्षित'],[/Base fare/,'मूल किराया'],[/Advanced life support/,'एडवांस्ड लाइफ सपोर्ट'],[/Basic life support/,'बेसिक लाइफ सपोर्ट'],[/Distance/,'दूरी'],[/Extra patients/,'अतिरिक्त मरीज़'],[/Night surcharge \(10 pm to 6 am\)/,'रात का अधिभार (रात 10 से सुबह 6)'],[/Peak-hour traffic/,'व्यस्त समय का ट्रैफ़िक'],[/demo fallback: GPS blocked/,'डेमो लोकेशन: GPS बंद है']];
+let LANG='en',busy=false;
+function tr(t){const m=t.match(/^(\s*[^\p{L}\p{N}₹]*)([\s\S]*?)(\s*→?\s*)$/u);if(!m||!m[2])return t;const c=m[2];let r=HI[c];
+ if(r===undefined)for(const [re,f] of PAT)if(re.test(c)){r=c.replace(re,f);break}
+ if(r===undefined){r=c;for(const [re,f] of SUB)r=r.replace(re,f);if(r===c)return t}
+ return m[1]+r+m[3]}
+function applyLang(root){busy=true;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE|NOSCRIPT|TEXTAREA)$/.test(n.parentNode.nodeName)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT}),L=[];while(w.nextNode())L.push(w.currentNode);
+ L.forEach(n=>{if(n._hi!==undefined&&n.nodeValue===n._hi){if(LANG==='en'){n.nodeValue=n._en;n._hi=undefined}return}
+  n._en=n.nodeValue;n._hi=undefined;if(LANG==='hi'){const x=tr(n.nodeValue);if(x!==n.nodeValue){n._hi=x;n.nodeValue=x}}});busy=false}
+new MutationObserver(ms=>{if(busy||LANG==='en')return;ms.forEach(m=>{if(m.type==='characterData')applyLang(m.target.parentNode);else m.addedNodes.forEach(a=>applyLang(a.nodeType===3?a.parentNode:a))})}).observe(document.body,{childList:true,subtree:true,characterData:true});
+function setLang(l){LANG=l;try{localStorage.setItem('viva_lang',l)}catch(e){}document.documentElement.lang=l;$('#langBtn').textContent=l==='hi'?'🌐 English':'🌐 हिन्दी';applyLang(document.body)}
+$('#langBtn').onclick=()=>setLang(LANG==='hi'?'en':'hi');
+{let l=null;try{l=localStorage.getItem('viva_lang')}catch(e){}if(!l&&/^hi/i.test(navigator.language||''))l='hi';if(l==='hi')setLang('hi')}
 // ---------- full-screen 3D human nervous system
 (function(){
  const cv=$('#bg'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
