@@ -111,9 +111,7 @@ input,select{background:#0a1330;border:1px solid #2f5bb5;border-radius:10px;padd
   <div class="glass p-6 mt-4"><h3 class="text-xl font-bold">⚡ Emergency shortcuts · no login, no typing</h3>
 <p class="text-sm text-zinc-300 mb-3">Set these up once, calmly, so you never navigate in a crisis. Every trigger gives a 3-second cancel window against false alarms.</p>
 <div class="grid sm:grid-cols-2 gap-3 text-sm">
-<div class="p-3 rounded-xl bg-black/40 border border-blue-800"><b>🔗 One-tap quick link</b><p class="text-zinc-400">Put it on your home screen, a QR sticker or an NFC tag. It opens straight into SOS.</p><button id="copyLink" class="btn alt mt-2 !py-2">Copy quick link</button><p id="copyMsg" class="text-xs break-all mt-1 text-sky-200"></p></div>
 <div class="p-3 rounded-xl bg-black/40 border border-blue-800"><b>📳 Shake phone 3×</b><p class="text-zinc-400">Works even if your hands are shaking or you can’t see the screen.</p><button id="shakeBtn" class="btn alt mt-2 !py-2">Enable shake-to-SOS</button><p id="shakeMsg" class="text-xs mt-1 text-sky-200"></p></div>
-<div class="p-3 rounded-xl bg-black/40 border border-blue-800"><b>🗣️ Voice trigger</b><p class="text-zinc-400">Say “help”, “emergency” or “SOS”. Keep this tab open.</p><button id="voiceBtn" class="btn alt mt-2 !py-2">Enable voice trigger</button><p id="voiceMsg" class="text-xs mt-1 text-sky-200"></p></div>
 <div class="p-3 rounded-xl bg-black/40 border border-blue-800"><b>⌨️ Press S 3× fast</b><p class="text-zinc-400">Always on for desktop. Also add to Home Screen: iPhone Share → Add to Home Screen · Android ⋮ → Install / Add to Home screen.</p></div>
 </div></div>
 <div class="mt-5 text-center"><button onclick="go(4)" class="btn text-lg">Report an emergency →</button></div>
@@ -354,9 +352,6 @@ function startSOS(why){clearInterval(ovT);let n=3;$('#sosOv').style.display='gri
 function closeOv(){clearInterval(ovT);$('#sosOv').style.display='none';clr()}
 function quickSOS(){closeOv();S.case='CASE-'+Math.floor(1000+Math.random()*9000);toast('🚨 SOS sent. Alerting police and hospitals with your GPS.');window.ping&&ping();go(5)}
 $('#ovGo').onclick=quickSOS;$('#ovNo').onclick=closeOv;
-if(location.hash==='#sos')startSOS('quick link');
-addEventListener('hashchange',()=>{if(location.hash==='#sos')startSOS('quick link')});
-$('#copyLink').onclick=async()=>{const u=location.href.split('#')[0]+'#sos';try{await navigator.clipboard.writeText(u);$('#copyMsg').textContent='Copied ✔ '+u}catch(e){$('#copyMsg').textContent=u}};
 let ks=[];addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)||e.ctrlKey||e.metaKey||e.key.toLowerCase()!=='s')return;const n=Date.now();ks=ks.filter(t=>n-t<1500);ks.push(n);if(ks.length>=3){ks=[];startSOS('S×3 shortcut')}});
 let shakeOn=false,sh=[],lv=null;
 $('#shakeBtn').onclick=async()=>{try{if(!window.DeviceMotionEvent){$('#shakeMsg').textContent='Not supported on this device';return}
@@ -364,11 +359,6 @@ $('#shakeBtn').onclick=async()=>{try{if(!window.DeviceMotionEvent){$('#shakeMsg'
  shakeOn=true;$('#shakeMsg').textContent='Shake-to-SOS is ON ✔'}catch(e){$('#shakeMsg').textContent='Unavailable here'}};
 addEventListener('devicemotion',e=>{if(!shakeOn)return;const a=e.accelerationIncludingGravity;if(!a)return;const m=Math.abs(a.x)+Math.abs(a.y)+Math.abs(a.z);
  if(lv!==null&&Math.abs(m-lv)>28){const n=Date.now();sh=sh.filter(t=>n-t<2000);sh.push(n);if(sh.length>=3){sh=[];startSOS('shake ×3')}}lv=m});
-$('#voiceBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('#voiceMsg').textContent='Not supported in this browser';return}
- const r=new SR();r.continuous=true;r.interimResults=true;r.lang=LANG==='hi'?'hi-IN':'en-IN';
- r.onresult=e=>{const t=[...e.results].slice(-2).map(x=>x[0].transcript.toLowerCase()).join(' ');if(/\b(help|emergency|accident|sos)\b|मदद|बचाओ|एम्बुलेंस|दुर्घटना|आपातकाल/.test(t)){r.onend=null;r.stop();startSOS('voice command')}};
- r.onend=()=>{try{r.start()}catch(e){}};
- try{r.start();$('#voiceMsg').textContent='Listening ✔ (keep this tab open)'}catch(e){$('#voiceMsg').textContent='Microphone unavailable'}};
 // ---------- dashboards
 const AMB=[{id:'AMB-101',drv:'R. Kumar',st:'Available'},{id:'AMB-102',drv:'S. Nair',st:'Available'},{id:'AMB-103',drv:'A. Khan',st:'Available'},{id:'AMB-104',drv:'M. Reddy',st:'Offline'}];
 const ST=['Available','En route','On scene','Transporting','At hospital','Offline'],HST=['Accepting','Busy','Diverted'];
